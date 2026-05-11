@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Secrets
+.env
+
+# Runtime data (generated on each run)
+data/dwh.db
+data/vector_store/
+results/

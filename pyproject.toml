@@ -1,0 +1,24 @@
+[project]
+name = "mare"
+version = "0.1.0"
+description = "Metadata Agent with ReAct and rEtrieval — PoC for BDCC paper"
+requires-python = ">=3.12"
+dependencies = [
+    "langgraph>=1.1.10",
+    "langchain-mcp-adapters>=0.2.2",
+    "langchain-openai>=0.3.0",
+    "mcp>=1.27.0",
+    "lancedb==0.30.2",
+    "ragas>=0.4.3",
+    "python-dotenv>=1.0.0",
+    "langchain-community>=0.4.1",
+]
+
+[project.scripts]
+mare = "main:main"
+
+[tool.uv]
+# Pin onnxruntime to version with macOS arm64 wheels
+override-dependencies = [
+    "onnxruntime==1.25.1",
+]

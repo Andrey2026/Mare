@@ -1,0 +1,48 @@
+{
+  "search_queries": [
+    {
+      "query": "contract report mart",
+      "expected_tables": ["dm_contract_report"],
+      "k": 3
+    },
+    {
+      "query": "table with contract termination status",
+      "expected_tables": ["dim_contract"],
+      "k": 3
+    },
+    {
+      "query": "revenue by contract",
+      "expected_tables": ["fact_revenue"],
+      "k": 3
+    },
+    {
+      "query": "manager information and departments",
+      "expected_tables": ["dim_manager"],
+      "k": 3
+    },
+    {
+      "query": "raw events from source systems",
+      "expected_tables": ["stg_contract_events"],
+      "k": 3
+    },
+    {
+      "query": "calendar dates months quarters",
+      "expected_tables": ["dim_date"],
+      "k": 3
+    }
+  ],
+  "scenarios": [
+    {
+      "id": "scenario_1",
+      "question": "Write a query returning revenue from terminated contracts for 2025, by month and responsible managers",
+      "ground_truth_answer": "SELECT dd.month_name, m.manager_name, SUM(fr.amount) as total_revenue FROM fact_revenue fr JOIN dim_contract dc ON fr.contract_id = dc.contract_id JOIN dim_date dd ON fr.date_id = dd.date_id JOIN dim_manager m ON dc.manager_id = m.manager_id WHERE dc.contract_status = 'terminated' AND dd.year = 2025 GROUP BY dd.month, m.manager_name ORDER BY dd.month, m.manager_name",
+      "expected_tables": ["dim_contract", "fact_revenue", "dim_manager", "dim_date"]
+    },
+    {
+      "id": "scenario_2",
+      "question": "Why is the contract report mart loading taking twice as long today?",
+      "ground_truth_answer": "The slowdown of etl_refresh_dm_contract_report (from ~15min to ~33min) is caused by anomalous data growth in stg_contract_events (8500 rows vs average ~1250, ratio 3.5x). The increased volume triggered a hash join fallback due to stale statistics on the (contract_id, event_date_id) index. Recommendations: 1) investigate source of data spike in stg_contract_events, 2) update table statistics, 3) review index on contract_id and event_date_id.",
+      "expected_tables": ["dm_contract_report"]
+    }
+  ]
+}
